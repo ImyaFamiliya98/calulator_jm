@@ -1,0 +1,70 @@
+const calculator = (string) => {
+  string = string.split(' ');
+
+  let op = string[1],
+      leftOperand = string[0],
+      rightOperand = string[2];
+
+  const reg = /[IVX]/;
+  const isRoman = (reg.test(leftOperand) && reg.test(rightOperand));
+
+  if (isRoman) {
+    leftOperand = romanToArabic(leftOperand);
+    rightOperand = romanToArabic(rightOperand);
+  }
+
+  const isStringCorrect = (leftOp, op, rightOp, isRoman) => {
+    const operators = ['+', '-', '*', '/'];
+    if (string.length > 3 || string.length < 3
+    || !operators.includes(op)
+    || leftOp > 10 || rightOp > 10
+    || leftOp === '0' || rightOp === '0'
+    || (!isRoman && (reg.test(leftOp) || reg.test(rightOp))))
+    {
+      throw new Error('Something went wrong');
+    }
+  }
+
+  isStringCorrect(leftOperand, op, rightOperand, isRoman);
+
+  let result = calc(Number(leftOperand), op, Number(rightOperand));
+
+  if (isRoman) {
+    result = result < 1 ? '' : arabicToRoman(result)
+  } else {
+    result = String(result)
+  }
+
+  return result;
+}
+
+const romanToArabic = (str) => {
+  const romans = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  return romans.indexOf(str) < 0 ? '0' : romans.indexOf(str);
+}
+
+const calc = (leftOperand, op, rightOperand) => {
+  switch (op) {
+    case '+': return leftOperand + rightOperand;
+    case '-': return leftOperand - rightOperand;
+    case '*': return leftOperand * rightOperand;
+    case '/': return Math.floor(leftOperand / rightOperand);
+  }
+}
+
+const arabicToRoman = (num) => {
+  const I = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+  const X = ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'];
+  
+  if (num === 100) {
+    return 'C';
+  }
+
+  let result = '';
+
+  num >= 10
+  ? result += X[Math.floor((num % 100) / 10)] + I[(num % 10)]
+  : result = I[(num % 10)];
+
+  return result;
+}
